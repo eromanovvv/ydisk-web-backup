@@ -36,8 +36,13 @@ try:
 except ImportError:
     sys.exit("Не установлен playwright. Запусти ./setup.sh (или: pip install playwright)")
 
-VERSION = "1.0.1"
+VERSION = "1.0.2"
 HERE = os.path.dirname(os.path.abspath(__file__))
+
+# Windows: консоль/файлы по умолчанию в cp1251 — имена файлов с эмодзи и т.п. ломали бы вывод.
+for _s in (sys.stdout, sys.stderr):
+    try: _s.reconfigure(encoding="utf-8", errors="replace")
+    except Exception: pass
 
 # ----------------------------------------------------------------------------
 # Браузер: отдельное окно Chrome со своим профилем, вызовы внутреннего API
@@ -180,7 +185,7 @@ def scan(roots, manifest_path):
         print(f"\r  папок: {len(dirs):>5}  файлов: {len(files):>6}  {tot/2**30:7.2f} GiB  ({d[:60]})      ", end="", flush=True)
     print()
     json.dump({"scanned_at": time.strftime("%Y-%m-%d %H:%M:%S"), "roots": roots, "files": files,
-               "dirs": dirs, "errors": errors}, open(manifest_path, "w"), ensure_ascii=False, indent=1)
+               "dirs": dirs, "errors": errors}, open(manifest_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     return files, errors
 
 # ----------------------------------------------------------------------------
@@ -289,12 +294,12 @@ def main():
     profile_dir = os.path.join(HERE, "chrome-profile", a.profile)
     print(f"ydisk-web-backup {VERSION}\n  профиль: {a.profile}\n  папка:   {dest}")
     disk = Disk(profile_dir, a.browser)
-    disk.debug = open(os.path.join(state, "api-calls.log"), "a")
+    disk.debug = open(os.path.join(state, "api-calls.log"), "a", encoding="utf-8")
     try:
         disk.login(a.login_timeout)
         manifest = os.path.join(state, "manifest.json")
         if a.no_rescan and os.path.exists(manifest):
-            files = json.load(open(manifest))["files"]; errors = []
+            files = json.load(open(manifest, encoding="utf-8"))["files"]; errors = []
             print(f"Использую manifest.json: {len(files)} файлов")
         else:
             print(f"Сканирую дерево: {a.roots}")
@@ -308,7 +313,7 @@ def main():
         print(f"К скачиванию: {len(todo)} файлов, {sum(f['size'] for f in todo)/2**30:.2f} GiB  (уже есть: {len(files)-len(todo)})\n")
         ts = time.strftime("%Y%m%d-%H%M%S")
         failed_path = os.path.join(state, f"failed-{ts}.txt")
-        log = open(failed_path, "w")
+        log = open(failed_path, "w", encoding="utf-8")
         counts = {"ok": 0, "skip": 0, "fail": 0}; done_bytes = 0; t0 = time.time(); lock = threading.Lock()
 
         def work(f):

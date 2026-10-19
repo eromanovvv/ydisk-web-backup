@@ -1,0 +1,18 @@
+# Профили браузера — в них сессии Яндекса. НИКОГДА не коммитить.
+chrome-profile/
+
+# Окружение Python
+.venv/
+__pycache__/
+*.pyc
+
+# Логи и локальные настройки ночного прогона
+*.log
+extras/macos-nightly/nightly.conf
+
+# Скачанные файлы (если кто-то положит их рядом со скриптом)
+YandexDisk-Backup/
+backup/
+_backup-state/
+
+.DS_Store

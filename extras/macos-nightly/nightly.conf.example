@@ -1,0 +1,4 @@
+# Один аккаунт в строке:  <профиль>  <папка назначения>
+# Профиль — то, что передавали в --profile; папка — что в --dest.
+default    ~/YandexDisk-Backup/default
+# masha    ~/YandexDisk-Backup/masha

@@ -26,7 +26,7 @@ BASE="${DESTS[1]:h}"
 LOGDIR="$BASE/_nightly-logs"; mkdir -p "$LOGDIR"
 REPORT="$BASE/ОТЧЁТ-последний-прогон.txt"
 
-if pgrep -f "ydisk-web-backup.py" >/dev/null; then
+if pgrep -f "[y]disk-web-backup.py --dest" >/dev/null; then   # [y] — чтобы не матчить собственную командную строку
   echo "Прогон $(date '+%Y-%m-%d %H:%M'): пропущен — предыдущий ещё работает" >> "$REPORT"; exit 0
 fi
 

@@ -15,8 +15,9 @@ PY="$REPO/.venv/bin/python"
 TS=$(date +%Y%m%d)
 
 typeset -a PROFILES DESTS
-while read -r prof dest rest; do
+while read -r prof dest; do        # dest — весь остаток строки: путь может содержать пробелы
   [[ -z "$prof" || "$prof" == \#* ]] && continue
+  dest="${dest%"${dest##*[! ]}"}"  # убрать пробелы в конце
   PROFILES+=("$prof"); DESTS+=("${dest/#\~/$HOME}")
 done < "$CONF"
 [[ ${#PROFILES} -gt 0 ]] || { echo "nightly.conf пуст"; exit 1; }
